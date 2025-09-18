@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Love Story</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(-45deg, #ff9a9e, #fecfef, #fecfef, #ff9a9e);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff69b4;
+            transform: rotate(45deg);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .heart:before,
+        .heart:after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff69b4;
+            border-radius: 50%;
+        }
+
+        .heart:before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart:after {
+            top: 0;
+            left: -10px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(45deg); opacity: 0.7; }
+            50% { transform: translateY(-20px) rotate(45deg); opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: #d63384;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .counter-section {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .counter-title {
+            font-size: 2rem;
+            color: #d63384;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .counter-display {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .counter-item {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            min-width: 120px;
+        }
+
+        .counter-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #d63384;
+            display: block;
+        }
+
+        .counter-label {
+            font-size: 1rem;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .gallery-section {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .gallery-title {
+            font-size: 2.5rem;
+            color: #d63384;
+            margin-bottom: 50px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            perspective: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-wheel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .gallery-item {
+            position: absolute;
+            width: 350px;
+            height: 450px;
+            left: 50%;
+            top: 50%;
+            margin-left: -175px;
+            margin-top: -225px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transition: all 0.8s ease;
+            cursor: pointer;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-controls {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .gallery-btn {
+            background: linear-gradient(45deg, #ff6b9d, #d63384);
+            border: none;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(214, 51, 132, 0.4);
+        }
+
+        .gallery-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(214, 51, 132, 0.6);
+        }
+
+        .gallery-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .love-letter-section {
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .letter-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .letter-title {
+            font-size: 2.5rem;
+            color: #d63384;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .envelope {
+            position: relative;
+            width: 500px;
+            height: 350px;
+            margin: 0 auto 40px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope-base {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ffd7d7, #ffb3ba);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(45deg, #ffb3ba, #ffd7d7);
+            border-radius: 10px 10px 0 0;
+            transform-origin: bottom center;
+            transition: transform 0.6s ease;
+            z-index: 2;
+        }
+
+        .envelope-flap:before {
+            content: '💕';
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        .letter {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            height: 70%;
+            background: #fff;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            overflow-y: auto;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            text-align: left;
+        }
+
+        .envelope.open .letter {
+            opacity: 1;
+        }
+
+        .letter h3 {
+            color: #d63384;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        .love-you{
+            font-weight: 800;
+            color:rgb(228, 31, 84);
+        }
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .counter-display {
+                gap: 15px;
+            }
+            
+            .counter-item {
+                min-width: 100px;
+                padding: 15px;
+            }
+            
+            .counter-number {
+                font-size: 2rem;
+            }
+            
+            .gallery-item {
+                width: 280px;
+                height: 360px;
+                margin-left: -140px;
+                margin-top: -180px;
+            }
+            
+            .envelope {
+                width: 400px;
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-hearts" id="heartsContainer"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>Our Beautiful Love Story 💕</h1>
+            <p style="font-size: 1.2rem; color: #666;">A journey of endless love and happiness</p>
+        </header>
+
+        <section class="counter-section">
+            <h2 class="counter-title">We've Been Together For</h2>
+            <div class="counter-display" id="counterDisplay">
+                <div class="counter-item">
+                    <span class="counter-number" id="years">0</span>
+                    <span class="counter-label">Years</span>
+                </div>
+                <div class="counter-item">
+                    <span class="counter-number" id="months">0</span>
+                    <span class="counter-label">Months</span>
+                </div>
+                <div class="counter-item">
+                    <span class="counter-number" id="days">0</span>
+                    <span class="counter-label">Days</span>
+                </div>
+                <div class="counter-item">
+                    <span class="counter-number" id="hours">0</span>
+                    <span class="counter-label">Hours</span>
+                </div>
+                <div class="counter-item">
+                    <span class="counter-number" id="minutes">0</span>
+                    <span class="counter-label">Minutes</span>
+                </div>
+                <div class="counter-item">
+                    <span class="counter-number" id="seconds">0</span>
+                    <span class="counter-label">Seconds</span>
+                </div>
+            </div>
+            <p style="font-style: italic; color: #666; margin-top: 20px;">Since December 22, 2022 at 4:53 PM ✨</p>
+        </section>
+
+        <section class="gallery-section">
+            <h2 class="gallery-title">Our Precious Memories</h2>
+            <div class="gallery-container">
+                <div class="gallery-wheel" id="galleryWheel">
+                    <!-- Gallery items will be generated by JavaScript -->
+                </div>
+            </div>
+            <div class="gallery-controls">
+                <button class="gallery-btn" id="prevBtn">‹</button>
+                <button class="gallery-btn" id="nextBtn">›</button>
+            </div>
+        </section>
+
+        <section class="love-letter-section">
+            <div class="letter-container">
+                <h2 class="letter-title">A Love Letter For You</h2>
+                <div class="envelope" id="envelope">
+                    <div class="envelope-base"></div>
+                    <div class="envelope-flap"></div>
+                    <div class="letter">
+                        <h3>My Dearest Koyena 💖</h3>
+                        <!-- <p>From the moment you entered my life, everything changed for the better. You brought colors I never knew existed, melodies I never thought I'd hear, and a love I never imagined possible.</p>
+                        
+                        <p>Every day with you feels like a beautiful dream that I never want to wake up from. Your smile lights up my darkest days, your laugh is my favorite song, and your love is my greatest treasure.</p>
+                        
+                        <p>I am grateful for every moment we've shared, every laugh we've had, every tear we've wiped away together, and every dream we've built side by side.</p>
+                        
+                        <p>You are not just my girlfriend; you are my best friend, my confidant, my partner in all of life's adventures, and the love of my life.</p>
+                        
+                        <p>Thank you for being you, for loving me unconditionally, and for making every day feel like a celebration of love.</p> -->
+                        <p>
+
+Reading between the lines, I want you to know that you are the most unbelievable woman ever to come in my life. Your extraordinary heart has been astonishing me and the amount of love that you pour on me day by day. You have been my constant, through all my stumbles, all my mistakes, all my failure, you have been there by me with that forgiving and pure love that makes me breathless. The fact that you can look beyond my imperfections, forgive every single mistake I committed and love me with no strings attached is something that will never be wasted upon me. You do not forgive, Koyena - you heal, you know, and you make me want to be the best possible version of myself to you. You are not merely the best girl I know you are my heart, my home, my all. I never would have thought of living without you since you are my life. You put me in all my dreams, in every plan I have, in every vision of my future. I would like to lead a beautiful life with you, make a lot of memories and love you even more each day. You are my everlasting, my ever-evermore, and the love that makes everything on this world to make perfect sense. I vow to love you, take care of your beautiful heart, and make each day and every day show you that you made the best choice. You, Koyena, are my supreme blessing and I belong to you forever.Thank for all the chances you've given to me, I plan on having a future together. <span class="love-you">I LOVE YOU KOYENA, HEHE💝💘❣️</span></p>
+
+                        
+                        <p style="text-align: center; margin-top: 20px; font-style: italic;">Forever and always yours,<br>❤️ Your Love ❤️</p>
+                    </div>
+                </div>
+                <p style="margin-top: 20px; color: #666; font-style: italic;">Click the envelope to read your letter 💌</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Floating hearts animation
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            heart.style.opacity = Math.random() * 0.5 + 0.3;
+            heart.style.transform = 'scale(' + (Math.random() * 0.5 + 0.5) + ') rotate(45deg)';
+            
+            document.getElementById('heartsContainer').appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        setInterval(createHeart, 2000);
+
+        // Relationship counter
+        function updateCounter() {
+            const startDate = new Date('2022-12-22T16:53:00');
+            const now = new Date();
+            
+            const diff = now - startDate;
+            
+            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+            const months = Math.floor((diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+            const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+        }
+
+        setInterval(updateCounter, 1000); // Update every second
+        updateCounter(); // Initial call
+
+        // 3D Gallery
+        const images = [
+            'one.jpg',
+            'two.jpg',
+            'three.jpg',
+            'four.jpg',
+            'five.jpg',
+            'six.jpg',
+            'seven.jpg',
+            'eight.jpg',
+            'nine.jpg',
+            'ten.jpg'
+        ];
+
+        let currentIndex = 0;
+        const totalImages = images.length;
+        const galleryWheel = document.getElementById('galleryWheel');
+
+        function createGalleryItems() {
+            images.forEach((src, index) => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = `Memory ${index + 1}`;
+                
+                item.appendChild(img);
+                galleryWheel.appendChild(item);
+            });
+            
+            updateGalleryPosition();
+        }
+
+        function updateGalleryPosition() {
+            const items = document.querySelectorAll('.gallery-item');
+            const angleStep = (2 * Math.PI) / totalImages;
+            const radius = 350;
+            
+            items.forEach((item, index) => {
+                const angle = angleStep * (index - currentIndex);
+                const x = Math.sin(angle) * radius;
+                const z = Math.cos(angle) * radius - radius;
+                const scale = (z + radius) / (2 * radius) * 0.8 + 0.2;
+                const opacity = Math.max(0.3, scale);
+                
+                // Check if this is the center image
+                const isCenterImage = index === currentIndex;
+                
+                if (isCenterImage) {
+                    // Center image: no scaling, perfect positioning
+                    item.style.transform = `translate3d(0px, 0px, 0px) scale(1)`;
+                    item.style.opacity = 1;
+                    item.style.zIndex = 1000;
+                    item.style.filter = 'none';
+                } else {
+                    // Other images: normal 3D positioning
+                    item.style.transform = `translate3d(${Math.round(x)}px, 0, ${Math.round(z)}px) scale(${scale})`;
+                    item.style.opacity = opacity;
+                    item.style.zIndex = Math.floor(scale * 100);
+                    item.style.filter = 'contrast(1.1) brightness(1.05)';
+                }
+            });
+        }
+
+        function rotateGallery(direction) {
+            if (direction === 'next') {
+                currentIndex = (currentIndex + 1) % totalImages;
+            } else {
+                currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+            }
+            updateGalleryPosition();
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', () => rotateGallery('next'));
+        document.getElementById('prevBtn').addEventListener('click', () => rotateGallery('prev'));
+
+        // Auto-rotate gallery
+        setInterval(() => rotateGallery('next'), 5000);
+
+        // Love letter envelope
+        document.getElementById('envelope').addEventListener('click', function() {
+            this.classList.toggle('open');
+        });
+
+        // Initialize gallery
+        createGalleryItems();
+    </script>
+</body>
+</html>
